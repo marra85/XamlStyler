@@ -1,3 +1,3 @@
 #!/bin/sh
 
-"/Applications/Xamarin Studio.app/Contents/MacOS/mdtool" setup pack bin/Release/XamlStyler.XamarinStudio.dll
+"/Applications/Visual\ Studio.app/Contents/MacOS/vstool" setup pack bin/Release/XamlStyler.XamarinStudio.dll

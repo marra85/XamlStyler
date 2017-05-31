@@ -36,9 +36,31 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseLegacy|AnyCPU' ">
+    <OutputPath>bin\ReleaseLegacy\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugLegacy|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugLegacy\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca48ace7223ead47, processorArchitecture=MSIL">
       <HintPath>..\packages\Irony.0.9.1\lib\net40\Irony.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -48,6 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentManipulation\DocumentManipulationService.cs" />
+    <Compile Include="DocumentManipulation\VSMReorderService.cs" />
+    <Compile Include="DocumentManipulation\AttributeRemovalService.cs" />
+    <Compile Include="DocumentManipulation\AttributeSelector.cs" />
     <Compile Include="DocumentProcessors\CDATADocumentProcessor.cs" />
     <Compile Include="DocumentProcessors\CommentDocumentProcessor.cs" />
     <Compile Include="DocumentProcessors\ElementDocumentProcessor.cs" />
@@ -67,6 +92,7 @@
     <Compile Include="MarkupExtensions\Formatter\MarkupExtensionFormatter.cs" />
     <Compile Include="MarkupExtensions\Formatter\MultiLineMarkupExtensionFormatter.cs" />
     <Compile Include="Options\AttributeIndentationStyle.cs" />
+    <Compile Include="Options\VisualStateManagerRule.cs" />
     <Compile Include="Options\StringArrayConverter.cs" />
     <Compile Include="Services\IndentService.cs" />
     <Compile Include="MarkupExtensions\Formatter\SingleLineMarkupExtensionFormatter.cs" />
@@ -111,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
+    <EmbeddedResource Include="Options\DefaultSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

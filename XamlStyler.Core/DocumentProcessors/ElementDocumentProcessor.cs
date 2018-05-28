@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using Xavalon.XamlStyler.Core.Extensions;
@@ -21,6 +22,8 @@ namespace Xavalon.XamlStyler.Core.DocumentProcessors
         private readonly IndentService indentService;
         private readonly IList<string> noNewLineElementsList;
         private readonly IList<string> firstLineAttributes;
+        private readonly string[] inlineCollections = { "TextBlock", "RichTextBlock", "Paragraph", "Span" };
+        private readonly string[] inlineTypes = { "Run", "Hyperlink", "Bold", "Italic", "Underline", "LineBreak", "Paragraph", "Span" };
 
         public ElementDocumentProcessor(
             IStylerOptions options,
@@ -57,8 +60,10 @@ namespace Xavalon.XamlStyler.Core.DocumentProcessors
             // Calculate how element should be indented
             if (!elementProcessContext.Current.IsPreservingSpace)
             {
-                // "Run" get special treatment to try to preserve spacing. Use xml:space='preserve' to make sure!
-                if (elementName.Equals("Run"))
+                // Preserve spacing if element is an inline type has a parent that supports inline types.
+                if ((elementProcessContext.Current.Parent.Name != null)
+                    && this.inlineCollections.Any(elementProcessContext.Current.Parent.Name.Contains)
+                    && this.inlineTypes.Any(elementName.Contains))
                 {
                     elementProcessContext.Current.Parent.IsSignificantWhiteSpace = true;
                     if ((output.Length == 0) || output.IsNewLine())
@@ -154,8 +159,13 @@ namespace Xavalon.XamlStyler.Core.DocumentProcessors
 
             if (this.options.EnableAttributeReordering)
             {
-                list.Sort(this.AttributeInfoComparison);
-                firstLineList.Sort(this.AttributeInfoComparison);
+                // .NET performs insertion sort if collection partition size is fewer than 16 elements, but it uses
+                // Heapsort or Quicksort under different conditions. This can lead to an unstable sort and randomized
+                // attributbes while formatting. Even though insertion sort is less performant, XAML elements with more
+                // than 16 attributes are not common, so the effect of forcing insertion sort is negligable in all but
+                // the most extreme of cases. - https://msdn.microsoft.com/en-us/library/b0zbh7b6(v=vs.110).aspx
+                list.InsertionSort(this.AttributeInfoComparison);
+                firstLineList.InsertionSort(this.AttributeInfoComparison);
             }
 
             var noLineBreakInAttributes = (list.Count <= this.options.AttributesTolerance) || isNoLineBreakElement;

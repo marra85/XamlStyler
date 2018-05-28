@@ -97,6 +97,18 @@ namespace Xavalon.XamlStyler.UnitTests
         }
 
         [Test]
+        public void TestSuppressedDefaultHandling()
+        {
+            var stylerOptions = new StylerOptions(
+                config: this.GetConfiguration(@"TestConfigurations\LegacyTestSettings.json"))
+            {
+                SuppressProcessing = true
+            };
+
+            this.DoTest(stylerOptions);
+        }
+
+        [Test]
         public void TestAttributeSortingOptionHandling()
         {
             var stylerOptions = new StylerOptions(
@@ -186,6 +198,12 @@ namespace Xavalon.XamlStyler.UnitTests
             };
 
             this.DoTest(stylerOptions);
+        }
+
+        [Test]
+        public void TestSingleLineNestedMarkupExtensions()
+        {
+            this.DoTest(new StylerOptions());
         }
 
         [Test]
